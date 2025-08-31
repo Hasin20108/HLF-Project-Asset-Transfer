@@ -23,12 +23,18 @@ type Asset struct {
 	Owner string `json:"Owner"`
 }
 
+// HistoricalAssetRecord contains the mutable details of an asset at a specific point in time.
+type HistoricalAssetRecord struct {
+	Price int    `json:"Price"`
+	Owner string `json:"Owner"`
+}
+
 // HistoryQueryResult structure used for returning history query results
 type HistoryQueryResult struct {
-	Record    *Asset    `json:"record"`
-	TxId      string    `json:"txId"`
-	Timestamp time.Time `json:"timestamp"`
-	IsDelete  bool      `json:"isDelete"`
+	Record    *HistoricalAssetRecord `json:"record"`
+	TxId      string                 `json:"txId"`
+	Timestamp time.Time              `json:"timestamp"`
+	IsDelete  bool                   `json:"isDelete"`
 }
 
 // InitLedger adds a base set of assets to the ledger
@@ -95,6 +101,11 @@ func (s *SmartContract) ReadAsset(ctx contractapi.TransactionContextInterface, i
 	}
 
 	return &asset, nil
+}
+
+// SearchAssetByID returns the asset stored in the world state with given id.
+func (s *SmartContract) SearchAssetByID(ctx contractapi.TransactionContextInterface, id string) (*Asset, error) {
+	return s.ReadAsset(ctx, id)
 }
 
 // UpdateAssetPrice updates the price of an existing asset in the world state.
@@ -172,15 +183,17 @@ func (s *SmartContract) GetAssetHistory(ctx contractapi.TransactionContextInterf
 			return nil, err
 		}
 
-		var asset Asset
-		if len(response.Value) > 0 {
+		var historicalRecord *HistoricalAssetRecord
+
+		if !response.IsDelete && len(response.Value) > 0 {
+			var asset Asset
 			err = json.Unmarshal(response.Value, &asset)
 			if err != nil {
 				return nil, err
 			}
-		} else {
-			asset = Asset{
-				ID: assetID,
+			historicalRecord = &HistoricalAssetRecord{
+				Price: asset.Price,
+				Owner: asset.Owner,
 			}
 		}
 
@@ -192,7 +205,7 @@ func (s *SmartContract) GetAssetHistory(ctx contractapi.TransactionContextInterf
 		record := HistoryQueryResult{
 			TxId:      response.TxId,
 			Timestamp: timestamp,
-			Record:    &asset,
+			Record:    historicalRecord,
 			IsDelete:  response.IsDelete,
 		}
 		records = append(records, record)

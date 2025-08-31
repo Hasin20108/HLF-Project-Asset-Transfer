@@ -23,7 +23,7 @@ const cryptoPath = process.env.CRYPTO_PATH || path.resolve(__dirname, '..', 'fab
 // Path to user private key and certificate.
 const keyDirectoryPath = path.resolve(cryptoPath, 'users', 'User1@org1.example.com', 'msp', 'keystore');
 const certPath = path.resolve(cryptoPath, 'users', 'User1@org1.example.com', 'msp', 'signcerts', 'User1@org1.example.com-cert.pem');
-// /home/hasin/Desktop/ExampleProjects/AssetTransfer/fabric-samples/test-network/organizations/peerOrganizations/org1.example.com/users/User1@org1.example.com/msp/signcerts/
+
 // Path to peer tls certificate.
 const tlsCertPath = path.resolve(cryptoPath, 'peers', 'peer0.org1.example.com', 'tls', 'ca.crt');
 
@@ -101,6 +101,23 @@ app.get('/api/assets', async (req, res) => {
         res.status(500).json({ error: 'Failed to get assets' });
     }
 });
+
+// Search for an asset by ID
+app.get('/api/assets/:id', async (req, res) => {
+    try {
+        const assetId = req.params.id;
+        console.log(`\n--> Evaluate Transaction: SearchAssetByID, returns asset with ID ${assetId}`);
+        const resultBytes = await contract.evaluateTransaction('SearchAssetByID', assetId);
+        const resultJson = decoder.decode(resultBytes);
+        const asset = resultJson ? JSON.parse(resultJson) : {};
+        console.log(`*** Result: ${JSON.stringify(asset)}`);
+        res.json(asset);
+    } catch (error) {
+        console.error(`Failed to get asset ${req.params.id}:`, error);
+        res.status(500).json({ error: `Failed to get asset ${req.params.id}` });
+    }
+});
+
 
 // Create a new asset
 app.post('/api/assets', async (req, res) => {

@@ -114,6 +114,10 @@ func (s *SmartContract) UpdateAssetPrice(ctx contractapi.TransactionContextInter
 	if err != nil {
 		return err
 	}
+	
+	if asset.Price == newPrice {
+		return fmt.Errorf("price is already %d, no update performed", newPrice)
+	}
 
 	asset.Price = newPrice
 	assetJSON, err := json.Marshal(asset)
@@ -129,6 +133,10 @@ func (s *SmartContract) TransferAsset(ctx contractapi.TransactionContextInterfac
 	asset, err := s.ReadAsset(ctx, id)
 	if err != nil {
 		return err
+	}
+
+	if asset.Owner == newOwner {
+		return fmt.Errorf("asset is already owned by %s, no transfer performed", newOwner)
 	}
 
 	asset.Owner = newOwner

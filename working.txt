@@ -22,10 +22,8 @@ cd test-network
 git clone https://github.com/hyperledger/fabric-samples.git
 cd fabric-samples
 git checkout release-2.2
-
+# use sudo for permission related isssues
 curl -sSL https://raw.githubusercontent.com/hyperledger/fabric/main/scripts/install-fabric.sh | bash -s
-
-
 export PATH=$PATH:$PWD/bin
 peer version
 

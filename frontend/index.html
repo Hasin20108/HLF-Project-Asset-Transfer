@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asset Management on Hyperledger Fabric</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 50;
+        }
+        .modal-content {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            max-width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .hidden { display: none; }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <div class="container mx-auto p-4 md:p-8">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-900">Asset Management Dashboard</h1>
+            <p class="text-gray-600 mt-2">Create, view, and transfer digital assets on a Hyperledger Fabric network.</p>
+        </header>
+
+        <main>
+            <!-- Create Asset Section -->
+            <div class="bg-white p-6 rounded-lg shadow-md mb-8">
+                <h2 class="text-2xl font-semibold mb-4 border-b pb-2">Create New Asset</h2>
+                <form id="createAssetForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <input type="text" id="assetId" placeholder="Asset ID (e.g., asset10)" required class="p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <input type="text" id="assetType" placeholder="Asset Type (e.g., Laptop)" required class="p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <input type="number" id="assetPrice" placeholder="Price" required class="p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <input type="text" id="assetOwner" placeholder="Owner" required class="p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <button type="submit" class="md:col-span-2 w-full bg-blue-600 text-white p-3 rounded-md hover:bg-blue-700 transition duration-300">Create Asset</button>
+                </form>
+            </div>
+
+            <!-- All Assets Section -->
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <div class="flex justify-between items-center mb-4 border-b pb-2">
+                    <h2 class="text-2xl font-semibold">All Assets</h2>
+                    <button id="refreshAssets" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300 transition duration-300">Refresh</button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full bg-white">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                                <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                                <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
+                                <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Owner</th>
+                                <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="assetTableBody" class="divide-y divide-gray-200">
+                            <!-- Asset rows will be injected here by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <div id="transferModal" class="modal-backdrop hidden">
+        <div class="modal-content w-full max-w-md">
+            <h3 class="text-xl font-semibold mb-4">Transfer Asset</h3>
+            <form id="transferAssetForm">
+                <input type="hidden" id="transferAssetId">
+                <input type="text" id="newOwner" placeholder="New Owner's Name" required class="w-full p-2 border rounded-md mb-4">
+                <div class="flex justify-end gap-4">
+                    <button type="button" id="cancelTransfer" class="bg-gray-300 text-gray-800 px-4 py-2 rounded-md">Cancel</button>
+                    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md">Confirm Transfer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div id="priceModal" class="modal-backdrop hidden">
+        <div class="modal-content w-full max-w-md">
+            <h3 class="text-xl font-semibold mb-4">Update Asset Price</h3>
+            <form id="updatePriceForm">
+                <input type="hidden" id="updatePriceAssetId">
+                <input type="number" id="newPrice" placeholder="New Price" required class="w-full p-2 border rounded-md mb-4">
+                <div class="flex justify-end gap-4">
+                    <button type="button" id="cancelPriceUpdate" class="bg-gray-300 text-gray-800 px-4 py-2 rounded-md">Cancel</button>
+                    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md">Update Price</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="historyModal" class="modal-backdrop hidden">
+        <div class="modal-content w-full max-w-3xl">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-semibold">Asset History</h3>
+                <button id="closeHistoryModal" class="text-gray-500 hover:text-gray-800">&times;</button>
+            </div>
+            <div id="historyContent" class="space-y-4">
+                <!-- History records will be injected here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:3000';
+
+        const createAssetForm = document.getElementById('createAssetForm');
+        const assetTableBody = document.getElementById('assetTableBody');
+        const refreshAssetsBtn = document.getElementById('refreshAssets');
+
+        // Modals
+        const transferModal = document.getElementById('transferModal');
+        const priceModal = document.getElementById('priceModal');
+        const historyModal = document.getElementById('historyModal');
+
+        // Transfer Modal Elements
+        const transferAssetForm = document.getElementById('transferAssetForm');
+        const transferAssetIdInput = document.getElementById('transferAssetId');
+        const cancelTransferBtn = document.getElementById('cancelTransfer');
+
+        // Price Modal Elements
+        const updatePriceForm = document.getElementById('updatePriceForm');
+        const updatePriceAssetIdInput = document.getElementById('updatePriceAssetId');
+        const cancelPriceUpdateBtn = document.getElementById('cancelPriceUpdate');
+
+        // History Modal Elements
+        const historyContent = document.getElementById('historyContent');
+        const closeHistoryModalBtn = document.getElementById('closeHistoryModal');
+
+        // Fetch and display all assets
+        async function fetchAssets() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/assets`);
+                if (!response.ok) throw new Error('Network response was not ok');
+                const assets = await response.json();
+                
+                assetTableBody.innerHTML = ''; // Clear existing table
+                if (assets && assets.length > 0) {
+                    assets.forEach(asset => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td class="py-4 px-6">${asset.ID}</td>
+                            <td class="py-4 px-6">${asset.Type}</td>
+                            <td class="py-4 px-6">${asset.Price}</td>
+                            <td class="py-4 px-6">${asset.Owner}</td>
+                            <td class="py-4 px-6 space-x-2">
+                                <button class="text-blue-500 hover:underline text-sm" onclick="openTransferModal('${asset.ID}')">Transfer</button>
+                                <button class="text-green-500 hover:underline text-sm" onclick="openPriceModal('${asset.ID}')">Update Price</button>
+                                <button class="text-purple-500 hover:underline text-sm" onclick="viewHistory('${asset.ID}')">History</button>
+                            </td>
+                        `;
+                        assetTableBody.appendChild(row);
+                    });
+                } else {
+                     assetTableBody.innerHTML = '<tr><td colspan="5" class="text-center py-4">No assets found.</td></tr>';
+                }
+            } catch (error) {
+                console.error('Error fetching assets:', error);
+                assetTableBody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-red-500">Failed to load assets. Is the server running?</td></tr>`;
+            }
+        }
+
+        // Create a new asset
+        createAssetForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const asset = {
+                id: document.getElementById('assetId').value,
+                type: document.getElementById('assetType').value,
+                price: parseInt(document.getElementById('assetPrice').value),
+                owner: document.getElementById('assetOwner').value,
+            };
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/assets`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(asset)
+                });
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Failed to create asset');
+                }
+                createAssetForm.reset();
+                fetchAssets();
+            } catch (error) {
+                console.error('Error creating asset:', error);
+                alert(`Error: ${error.message}`);
+            }
+        });
+
+        // Open modals
+        function openTransferModal(assetId) {
+            transferAssetIdInput.value = assetId;
+            transferModal.classList.remove('hidden');
+        }
+        function openPriceModal(assetId) {
+            updatePriceAssetIdInput.value = assetId;
+            priceModal.classList.remove('hidden');
+        }
+
+        // Close modals
+        cancelTransferBtn.addEventListener('click', () => transferModal.classList.add('hidden'));
+        cancelPriceUpdateBtn.addEventListener('click', () => priceModal.classList.add('hidden'));
+        closeHistoryModalBtn.addEventListener('click', () => historyModal.classList.add('hidden'));
+
+        // Handle Transfer
+        transferAssetForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const assetId = transferAssetIdInput.value;
+            const newOwner = document.getElementById('newOwner').value;
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/assets/${assetId}/transfer`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ newOwner })
+                });
+                if (!response.ok) throw new Error('Failed to transfer asset');
+                transferModal.classList.add('hidden');
+                transferAssetForm.reset();
+                fetchAssets();
+            } catch (error) {
+                console.error('Error transferring asset:', error);
+                alert('Error transferring asset.');
+            }
+        });
+        
+        // Handle Price Update
+        updatePriceForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const assetId = updatePriceAssetIdInput.value;
+            const newPrice = parseInt(document.getElementById('newPrice').value);
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/assets/${assetId}/price`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ newPrice })
+                });
+                if (!response.ok) throw new Error('Failed to update price');
+                priceModal.classList.add('hidden');
+                updatePriceForm.reset();
+                fetchAssets();
+            } catch (error) {
+                console.error('Error updating price:', error);
+                alert('Error updating price.');
+            }
+        });
+
+        // View Asset History
+        async function viewHistory(assetId) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/assets/${assetId}/history`);
+                if (!response.ok) throw new Error('Failed to fetch history');
+                const history = await response.json();
+
+                historyContent.innerHTML = ''; // Clear previous history
+                if (history && history.length > 0) {
+                    history.forEach(record => {
+                        const recordDiv = document.createElement('div');
+                        recordDiv.className = 'p-4 border rounded-md bg-gray-50';
+                        const recordData = record.record;
+                        recordDiv.innerHTML = `
+                            <p><strong>Transaction ID:</strong> <span class="text-sm font-mono">${record.txId}</span></p>
+                            <p><strong>Timestamp:</strong> ${new Date(record.timestamp).toLocaleString()}</p>
+                            <div class="mt-2 p-2 bg-gray-100 rounded">
+                                <p><strong>ID:</strong> ${recordData.ID}</p>
+                                <p><strong>Type:</strong> ${recordData.Type}</p>
+                                <p><strong>Price:</strong> ${recordData.Price}</p>
+                                <p><strong>Owner:</strong> ${recordData.Owner}</p>
+                            </div>
+                        `;
+                        historyContent.appendChild(recordDiv);
+                    });
+                } else {
+                    historyContent.innerHTML = '<p>No history found for this asset.</p>';
+                }
+                historyModal.classList.remove('hidden');
+            } catch (error) {
+                console.error('Error fetching history:', error);
+                alert('Could not fetch asset history.');
+            }
+        }
+
+        // Event Listeners
+        refreshAssetsBtn.addEventListener('click', fetchAssets);
+        
+        // Initial load
+        document.addEventListener('DOMContentLoaded', fetchAssets);
+    </script>
+</body>
+</html>
+

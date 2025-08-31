@@ -1,0 +1,78 @@
+hasin@hasin-IdeaPad-Slim-3-15ABR8:~/Desktop/ExampleProjects/AssetTransfer/fabric-samples/test-network$ ./network.sh up createChannel
+Using docker and docker compose
+Creating channel 'mychannel'.
+If network is not up, starting nodes with CLI timeout of '5' tries and CLI delay of '3' seconds and using database 'leveldb with crypto from 'cryptogen'
+Bringing up network
+LOCAL_VERSION=v2.5.12
+DOCKER_IMAGE_VERSION=v2.5.12
+/home/hasin/Desktop/ExampleProjects/AssetTransfer/fabric-samples/test-network/../bin/cryptogen
+Generating certificates using cryptogen tool
+Creating Org1 Identities
++ cryptogen generate --config=./organizations/cryptogen/crypto-config-org1.yaml --output=organizations
+org1.example.com
++ res=0
+Creating Org2 Identities
++ cryptogen generate --config=./organizations/cryptogen/crypto-config-org2.yaml --output=organizations
+org2.example.com
++ res=0
+Creating Orderer Org Identities
++ cryptogen generate --config=./organizations/cryptogen/crypto-config-orderer.yaml --output=organizations
++ res=0
+Generating CCP files for Org1 and Org2
+WARN[0000] /home/hasin/Desktop/ExampleProjects/AssetTransfer/fabric-samples/test-network/compose/compose-test-net.yaml: the attribute `version` is obsolete, it will be ignored, please remove it to avoid potential confusion 
+WARN[0000] /home/hasin/Desktop/ExampleProjects/AssetTransfer/fabric-samples/test-network/compose/docker/docker-compose-test-net.yaml: the attribute `version` is obsolete, it will be ignored, please remove it to avoid potential confusion 
+WARN[0000] Found orphan containers ([ca_org2 ca_orderer ca_org1]) for this project. If you removed or renamed this service in your compose file, you can run this command with the --remove-orphans flag to clean it up. 
+[+] Running 3/3
+ ✔ Container orderer.example.com     Started                                                                                                                                             0.3s 
+ ✔ Container peer0.org1.example.com  Started                                                                                                                                             0.3s 
+ ✔ Container peer0.org2.example.com  Started                                                                                                                                             0.3s 
+CONTAINER ID   IMAGE                               COMMAND                  CREATED                  STATUS                      PORTS                                                                                                                                   NAMES
+288ecc0a4c16   hyperledger/fabric-peer:latest      "peer node start"        Less than a second ago   Up Less than a second       0.0.0.0:9051->9051/tcp, [::]:9051->9051/tcp, 7051/tcp, 0.0.0.0:9445->9445/tcp, [::]:9445->9445/tcp                                      peer0.org2.example.com
+4ab24a118495   hyperledger/fabric-peer:latest      "peer node start"        Less than a second ago   Up Less than a second       0.0.0.0:7051->7051/tcp, [::]:7051->7051/tcp, 0.0.0.0:9444->9444/tcp, [::]:9444->9444/tcp                                                peer0.org1.example.com
+fa4e3b32c8fb   hyperledger/fabric-orderer:latest   "orderer"                Less than a second ago   Up Less than a second       0.0.0.0:7050->7050/tcp, [::]:7050->7050/tcp, 0.0.0.0:7053->7053/tcp, [::]:7053->7053/tcp, 0.0.0.0:9443->9443/tcp, [::]:9443->9443/tcp   orderer.example.com
+2f1a9e856db0   09cb0b50ebdb                        "sh -c 'fabric-ca-se…"   2 days ago               Exited (137) 31 hours ago                                                                                                                                           ca_org2
+976ab23359bc   09cb0b50ebdb                        "sh -c 'fabric-ca-se…"   2 days ago               Exited (137) 31 hours ago                                                                                                                                           ca_orderer
+8a178dd1e398   09cb0b50ebdb                        "sh -c 'fabric-ca-se…"   2 days ago               Exited (137) 31 hours ago                                                                                                                                           ca_org1
+Using docker and docker compose
+Generating channel genesis block 'mychannel.block'
+Using organization 1
+/home/hasin/Desktop/ExampleProjects/AssetTransfer/fabric-samples/test-network/../bin/configtxgen
++ '[' 0 -eq 1 ']'
++ configtxgen -profile ChannelUsingRaft -outputBlock ./channel-artifacts/mychannel.block -channelID mychannel
+2025-08-31 09:27:23.620 +06 0001 INFO [common.tools.configtxgen] main -> Loading configuration
+2025-08-31 09:27:23.624 +06 0002 INFO [common.tools.configtxgen.localconfig] completeInitialization -> orderer type: etcdraft
+2025-08-31 09:27:23.624 +06 0003 INFO [common.tools.configtxgen.localconfig] completeInitialization -> Orderer.EtcdRaft.Options unset, setting to tick_interval:"500ms" election_tick:10 heartbeat_tick:1 max_inflight_blocks:5 snapshot_interval_size:16777216 
+2025-08-31 09:27:23.624 +06 0004 INFO [common.tools.configtxgen.localconfig] Load -> Loaded configuration: /home/hasin/Desktop/ExampleProjects/AssetTransfer/fabric-samples/test-network/configtx/configtx.yaml
+2025-08-31 09:27:23.627 +06 0005 INFO [common.tools.configtxgen] doOutputBlock -> Generating genesis block
+2025-08-31 09:27:23.627 +06 0006 INFO [common.tools.configtxgen] doOutputBlock -> Creating application channel genesis block
+2025-08-31 09:27:23.628 +06 0007 INFO [common.tools.configtxgen] doOutputBlock -> Writing genesis block
++ res=0
+Creating channel mychannel
+Adding orderers
++ . scripts/orderer.sh mychannel
++ '[' 0 -eq 1 ']'
++ res=0
+Status: 405
+{
+	"error": "cannot join: channel already exists"
+}
+
+Channel 'mychannel' created
+Joining org1 peer to the channel...
+Using organization 1
++ peer channel join -b ./channel-artifacts/mychannel.block
++ res=1
++ peer channel join -b ./channel-artifacts/mychannel.block
++ res=1
++ peer channel join -b ./channel-artifacts/mychannel.block
++ res=1
++ peer channel join -b ./channel-artifacts/mychannel.block
++ res=1
+2025-08-31 09:27:38.923 +06 0001 INFO [channelCmd] InitCmdFactory -> Endorser and orderer connections initialized
+Error: proposal failed (err: bad proposal response 500: cannot create ledger from genesis block: ledger [mychannel] already exists with state [ACTIVE])
+After 5 attempts, peer0.org1 has failed to join channel 'mychannel' 
+hasin@hasin-IdeaPad-Slim-3-15ABR8:~/Desktop/ExampleProjects/AssetTransfer/fabric-samples/test-network$ docker ps
+CONTAINER ID   IMAGE                               COMMAND             CREATED          STATUS          PORTS                                                                                                                                   NAMES
+288ecc0a4c16   hyperledger/fabric-peer:latest      "peer node start"   31 seconds ago   Up 31 seconds   0.0.0.0:9051->9051/tcp, [::]:9051->9051/tcp, 7051/tcp, 0.0.0.0:9445->9445/tcp, [::]:9445->9445/tcp                                      peer0.org2.example.com
+4ab24a118495   hyperledger/fabric-peer:latest      "peer node start"   31 seconds ago   Up 31 seconds   0.0.0.0:7051->7051/tcp, [::]:7051->7051/tcp, 0.0.0.0:9444->9444/tcp, [::]:9444->9444/tcp                                                peer0.org1.example.com
+fa4e3b32c8fb   hyperledger/fabric-orderer:latest   "orderer"           31 seconds ago   Up 31 seconds   0.0.0.0:7050->7050/tcp, [::]:7050->7050/tcp, 0.0.0.0:7053->7053/tcp, [::]:7053->7053/tcp, 0.0.0.0:9443->9443/tcp, [::]:9443->9443/tcp   orderer.example.com

@@ -28,8 +28,12 @@ HFL-Project-Asset-Transfer/
 
 ## 🛠️ Setup Instructions
 
-### 1️⃣ Clone Fabric Samples
+### 1️⃣ Clone The project and Fabric Samples
 ```bash
+git clone https://github.com/Hasin20108/HLF-Project-Asset-Transfer.git
+
+cd HFL-Project-Asset-Transfer
+
 # location: HFL-Project-Asset-Transfer/
 git clone https://github.com/hyperledger/fabric-samples.git
 cd fabric-samples

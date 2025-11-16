@@ -1,10 +1,10 @@
-# 🚀 Hyperledger Fabric Asset Transfer Project
+# Hyperledger Fabric Asset Transfer Project
 
 This project demonstrates setting up a **Hyperledger Fabric test network** and running a simple **Asset Transfer API Server** using **Node.js**.
 
 ---
 
-## 📂 Project Structure
+## Project Structure
 ```
 
 HFL-Project-Asset-Transfer/
@@ -17,17 +17,12 @@ HFL-Project-Asset-Transfer/
 
 ---
 
-## ⚙️ Prerequisites
-- **Git**
-- **cURL / wget**
-- **Docker & Docker Compose**
-- **Node.js (>= 14.x) & npm**
-- **Go (for chaincode development)**
 
 ---
 
-## 🛠️ Setup Instructions
-
+# Setup Instructions
+## Install Prerequisites accorting to the prerequisites.txt file
+## Then follow the following steps 
 ### 1️⃣ Clone The project and Fabric Samples
 ```bash
 git clone https://github.com/Hasin20108/HLF-Project-Asset-Transfer.git
@@ -42,12 +37,9 @@ cd fabric-samples
 ### 2️⃣ Install Fabric Binaries
 
 ```bash
-git checkout release-2.2
 # use sudo if permission issues occur
 curl -sSL https://raw.githubusercontent.com/hyperledger/fabric/main/scripts/install-fabric.sh | bash -s
 export PATH=$PATH:$PWD/bin
-
-# verify installation
 peer version
 ```
 
@@ -61,17 +53,20 @@ cd test-network
 
 # deploy the chaincode
 ./network.sh deployCC -ccn asset -ccp ../../chaincode -ccl go
+
+# for checking the containers
+docker ps --format table{{.Names}}
 ```
 
 ---
 
-## 🌐 Run the API Server
+## Run the API Server
 
 ```bash
 # location: HLF-Project-Asset-Transfer/api-server
 cd ../../api-server
 
-    npm install express @hyperledger/fabric-gateway @grpc/grpc-js
+npm install express @hyperledger/fabric-gateway @grpc/grpc-js
 
 # start server
 node server.js
@@ -79,7 +74,7 @@ node server.js
 
 ---
 
-## 🛑 Shutting Down the Network
+## Shutting Down the Network
 
 ```bash
 # location: HLF-Project-Asset-Transfer/fabric-samples/test-network
@@ -88,7 +83,7 @@ node server.js
 
 ---
 
-## ✅ Summary
+## Summary
 
 * Fabric binaries & Docker containers set up using `install-fabric.sh`
 * Test network launched with a single channel
@@ -97,7 +92,7 @@ node server.js
 
 ---
 
-## 📖 References
+## References
 
 * [Hyperledger Fabric Documentation](https://hyperledger-fabric.readthedocs.io/)
 * [Fabric Samples GitHub](https://github.com/hyperledger/fabric-samples)

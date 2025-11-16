@@ -71,7 +71,7 @@ cd test-network
 # location: HLF-Project-Asset-Transfer/api-server
 cd ../../api-server
 
-npm install express @hyperledger/fabric-gateway @grpc/grpc-js
+    npm install express @hyperledger/fabric-gateway @grpc/grpc-js
 
 # start server
 node server.js

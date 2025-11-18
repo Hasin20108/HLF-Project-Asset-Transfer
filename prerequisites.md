@@ -1,51 +1,49 @@
-## always start clean
-sudo apt update && sudo apt upgrade -y
-sudo apt install -y ca-certificates gnupg lsb-release
-
-
+## Always start clean
+``` bash
+sudo apt update
+```
 ## Install curl
-** Uninstall curl 
-sudo apt remove --purge -y curl
-sudo apt autoremove -y
-
-** install
+``` bash
 sudo apt install -y curl
 curl --version
-curl varsion: 8.5.0
+```
+
 
 
 ## Docker Installation
 
-** install docker desktop from the following link
+### install docker desktop from the following link
+```bash
 https://docs.docker.com/desktop/setup/install/linux/ubuntu/
+```
 
-// grant permission for docker
+### grant permission for docker
+```bash
+sudo groupadd docker
 sudo usermod -aG docker $USER
 newgrp docker 
 docker ps 
 docker run hello-world
-
+```
 
 
 ## Install jq
+```bash
 sudo apt install -y jq
 jq --version
-
+```
 
 ## Install Go
+```bash
 sudo apt install -y golang-go
 go version
-
+```
 
 ## Install node.js
-
+``` bash
 curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
 sudo apt install -y nodejs
-
-
-sudo apt autoremove -y
-sudo apt autoclean
-sudo apt clean
+```
 
 
 

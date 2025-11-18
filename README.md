@@ -23,7 +23,7 @@ HFL-Project-Asset-Transfer/
 # Setup Instructions
 ## Install Prerequisites accorting to the prerequisites.txt file
 ## Then follow the following steps 
-### 1️⃣ Clone The project and Fabric Samples
+### 1 Clone The project and Fabric Samples
 ```bash
 git clone https://github.com/Hasin20108/HLF-Project-Asset-Transfer.git
 
@@ -32,10 +32,22 @@ export PATH=$PATH:$PWD/bin
 peer version
 ```
 
-### 3️⃣ Start the Test Network
+### 2 Check all prerequisites 
+```bash
+cd ..
+./check_prerequisites.sh
+# if any tool missing install it before proceeding
+# installing commands are in prerequisites.md file
+```
+
+### 3 Start the Test Network
 
 ```bash
 cd test-network
+
+sudo groupadd docker
+sudo usermod -aG docker $USER
+newgrp docker 
 
 ./network.sh down
 ./network.sh up createChannel -ca

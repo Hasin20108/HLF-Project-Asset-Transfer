@@ -18,11 +18,11 @@ const chaincodeName = process.env.CHAINCODE_NAME || 'asset';
 const mspId = process.env.MSP_ID || 'Org1MSP';
 
 // Path to crypto materials. This path is resolved relative to the server.js file location.
-const cryptoPath = process.env.CRYPTO_PATH || path.resolve(__dirname, '..', 'fabric-samples', 'test-network', 'organizations', 'peerOrganizations', 'org1.example.com');
+const cryptoPath = process.env.CRYPTO_PATH || path.resolve(__dirname, '..', 'blockchain-network', 'test-network', 'organizations', 'peerOrganizations', 'org1.example.com');
 
 // Path to user private key and certificate.
 const keyDirectoryPath = path.resolve(cryptoPath, 'users', 'User1@org1.example.com', 'msp', 'keystore');
-const certPath = path.resolve(cryptoPath, 'users', 'User1@org1.example.com', 'msp', 'signcerts', 'User1@org1.example.com-cert.pem');
+const certPath = path.resolve(cryptoPath, 'users', 'User1@org1.example.com', 'msp', 'signcerts', 'cert.pem');
 
 // Path to peer tls certificate.
 const tlsCertPath = path.resolve(cryptoPath, 'peers', 'peer0.org1.example.com', 'tls', 'ca.crt');

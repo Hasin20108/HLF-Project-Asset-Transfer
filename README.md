@@ -27,18 +27,7 @@ HFL-Project-Asset-Transfer/
 ```bash
 git clone https://github.com/Hasin20108/HLF-Project-Asset-Transfer.git
 
-cd HFL-Project-Asset-Transfer
-
-# location: HFL-Project-Asset-Transfer/
-git clone https://github.com/hyperledger/fabric-samples.git
-cd fabric-samples
-````
-
-### 2️⃣ Install Fabric Binaries
-
-```bash
-# use sudo if permission issues occur
-curl -sSL https://raw.githubusercontent.com/hyperledger/fabric/main/scripts/install-fabric.sh | bash -s
+cd HFL-Project-Asset-Transfer/blockchain-network/
 export PATH=$PATH:$PWD/bin
 peer version
 ```
@@ -48,11 +37,9 @@ peer version
 ```bash
 cd test-network
 
-# bring up network and create a channel
-./network.sh up createChannel
-
-# deploy the chaincode
-./network.sh deployCC -ccn asset -ccp ../../chaincode -ccl go
+./network.sh down
+./network.sh up createChannel -ca
+./network.sh deployCCAAS -ccn asset -ccp ../../chaincode -ccl go
 
 # for checking the containers
 docker ps --format table{{.Names}}

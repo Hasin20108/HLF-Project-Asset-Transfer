@@ -15,10 +15,6 @@ curl varsion: 8.5.0
 
 
 ## Docker Installation
-** uninstall docker
-sudo apt remove $(dpkg --get-selections docker.io docker-compose docker-compose-v2 docker-doc podman-docker containerd runc | cut -f1)
-sudo apt remove -y docker docker.io containerd containerd.io
-sudo apt autoremove -y
 
 ** install docker desktop from the following link
 https://docs.docker.com/desktop/setup/install/linux/ubuntu/
@@ -32,53 +28,19 @@ docker run hello-world
 
 
 ## Install jq
-** uninstall
-sudo apt remove --purge -y jq
-sudo apt autoremove -y
-
-sudo rm -f /usr/local/bin/jq
-
-** install
 sudo apt install -y jq
 jq --version
 
 
 ## Install Go
-** uninstall go
-which go
-sudo rm -rf /usr/local/go
-sudo rm -rf ~/go
-sudo apt remove --purge -y golang-go
-sudo apt autoremove -y
-
-** install go
 sudo apt install -y golang-go
 go version
 
 
 ## Install node.js
-// uninstall node.js
-sudo apt remove --purge -y nodejs npm
-sudo apt autoremove -y
 
-nvm uninstall node
-rm -rf ~/.nvm
-
-// if installed manually
-sudo rm -f /usr/local/bin/node
-sudo rm -f /usr/local/bin/npm
-sudo rm -f /usr/local/bin/npx
-
-
-
-** install node.js
 curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
 sudo apt install -y nodejs
-
-## Optional Cleanup
-sudo apt autoremove -y
-sudo apt clean
-
 
 
 sudo apt autoremove -y

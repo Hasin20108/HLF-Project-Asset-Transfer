@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "@grpc/grpc-js": "^1.14.1",
+    "@hyperledger/fabric-gateway": "^1.10.0",
+    "express": "^5.1.0"
+  }
+}

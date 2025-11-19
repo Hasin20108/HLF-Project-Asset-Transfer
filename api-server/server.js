@@ -13,7 +13,7 @@ const port = 3000;
 const decoder = new TextDecoder();
 
 // --- Configuration ---
-const channelName = process.env.CHANNEL_NAME || 'mychannel';
+const channelName = process.env.CHANNEL_NAME || 'channel1';
 const chaincodeName = process.env.CHAINCODE_NAME || 'asset';
 const mspId = process.env.MSP_ID || 'Org1MSP';
 
@@ -119,20 +119,32 @@ app.get('/api/assets/:id', async (req, res) => {
 });
 
 
-// Create a new asset
+// Create a new asset (ID is optional, will be auto-generated if not provided)
 app.post('/api/assets', async (req, res) => {
     try {
         const { id, type, price, owner } = req.body;
-        console.log(`\n--> Submit Transaction: CreateAsset, creates new asset with ID: ${id}`);
-        await contract.submitTransaction(
+        
+        // If id is not provided, pass empty string to let chaincode generate UUID
+        const assetId = id || '';
+        
+        console.log(`\n--> Submit Transaction: CreateAsset, creates new asset${assetId ? ' with ID: ' + assetId : ' with auto-generated ID'}`);
+        
+        const resultBytes = await contract.submitTransaction(
             'CreateAsset',
-            id,
+            assetId,
             type,
             String(price),
             owner
         );
-        console.log('*** Transaction committed successfully');
-        res.status(201).json({ message: `Asset ${id} created successfully` });
+        
+        // Decode the result to get the generated/used ID
+        const generatedId = decoder.decode(resultBytes);
+        
+        console.log(`*** Transaction committed successfully. Asset ID: ${generatedId}`);
+        res.status(201).json({ 
+            message: `Asset created successfully`,
+            id: generatedId
+        });
     } catch (error) {
         console.error('Failed to create asset:', error);
         res.status(500).json({ error: `Failed to create asset: ${error.message}` });
@@ -217,4 +229,3 @@ process.on('SIGINT', () => {
     }
     process.exit(0);
 });
-

@@ -49,9 +49,10 @@ sudo groupadd docker
 sudo usermod -aG docker $USER
 newgrp docker 
 
+
 ./network.sh down
-./network.sh up createChannel -ca
-./network.sh deployCCAAS -ccn asset -ccp ../../chaincode -ccl go
+./network.sh up createChannel -ca -c channel1 -s couchdb
+./network.sh deployCCAAS -c channel1 -ccn asset -ccp ../../chaincode -ccv 1 -ccl go
 
 # for checking the containers
 docker ps --format table{{.Names}}

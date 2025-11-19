@@ -61,13 +61,22 @@ func (s *SmartContract) InitLedger(ctx contractapi.TransactionContextInterface) 
 }
 
 // CreateAsset issues a new asset to the world state with given details.
-func (s *SmartContract) CreateAsset(ctx contractapi.TransactionContextInterface, id string, assetType string, price int, owner string) error {
+// If id is empty string, it will generate a deterministic ID based on transaction ID
+func (s *SmartContract) CreateAsset(ctx contractapi.TransactionContextInterface, id string, assetType string, price int, owner string) (string, error) {
+	// Generate deterministic ID if id is empty
+	if id == "" {
+		// Use transaction ID to create a deterministic UUID
+		// This ensures all peers generate the same ID
+		txID := ctx.GetStub().GetTxID()
+		id = "asset_" + txID[:16] // Use first 16 chars of transaction ID
+	}
+
 	exists, err := s.AssetExists(ctx, id)
 	if err != nil {
-		return err
+		return "", err
 	}
 	if exists {
-		return fmt.Errorf("the asset %s already exists", id)
+		return "", fmt.Errorf("the asset %s already exists", id)
 	}
 
 	asset := Asset{
@@ -78,10 +87,16 @@ func (s *SmartContract) CreateAsset(ctx contractapi.TransactionContextInterface,
 	}
 	assetJSON, err := json.Marshal(asset)
 	if err != nil {
-		return err
+		return "", err
 	}
 
-	return ctx.GetStub().PutState(id, assetJSON)
+	err = ctx.GetStub().PutState(id, assetJSON)
+	if err != nil {
+		return "", err
+	}
+
+	// Return the generated/used ID
+	return id, nil
 }
 
 // ReadAsset returns the asset stored in the world state with given id.
@@ -242,4 +257,3 @@ func main() {
 		log.Panicf("Error starting asset-transfer-basic chaincode: %v", err)
 	}
 }
-

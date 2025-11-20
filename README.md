@@ -27,7 +27,7 @@ HFL-Project-Asset-Transfer/
 ```bash
 git clone https://github.com/Hasin20108/HLF-Project-Asset-Transfer.git
 
-cd HFL-Project-Asset-Transfer/blockchain-network/
+cd HFL-Project-Asset-Transfer/blockchain-network
 export PATH=$PATH:$PWD/bin
 peer version
 ```
@@ -51,8 +51,8 @@ newgrp docker
 
 
 ./network.sh down
-./network.sh up createChannel -ca -c channel1 -s couchdb
-./network.sh deployCCAAS -c channel1 -ccn asset -ccp ../../chaincode -ccv 1 -ccl go
+./network.sh up createChannel -ca
+./network.sh deployCCAAS -ccn asset -ccp ../../chaincode -ccv 1 -ccl go
 
 # for checking the containers
 docker ps --format table{{.Names}}

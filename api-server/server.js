@@ -13,7 +13,7 @@ const port = 3000;
 const decoder = new TextDecoder();
 
 // --- Configuration ---
-const channelName = process.env.CHANNEL_NAME || 'channel1';
+const channelName = process.env.CHANNEL_NAME || 'mychannel';
 const chaincodeName = process.env.CHAINCODE_NAME || 'asset';
 const mspId = process.env.MSP_ID || 'Org1MSP';
 
